@@ -29,7 +29,8 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'bestpay-4rw6h.ondigitalocean.app'
+    'bestpay-4rw6h.ondigitalocean.app',
+    'www.mtndata.shop'
 ]
 
 
