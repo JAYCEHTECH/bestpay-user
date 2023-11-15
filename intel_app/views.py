@@ -381,7 +381,7 @@ def mark_as_sent(request, pk):
         }
 
         agent_sms_body = {
-            'recipient': f"233{user.phone}",
+            'recipient': f"233{txn.user.phone}",
             'sender_id': 'Bundle',
             'message': agent_message
         }
