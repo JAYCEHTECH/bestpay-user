@@ -372,13 +372,22 @@ def mark_as_sent(request, pk):
 
         sms_url = 'https://webapp.usmsgh.com/api/sms/send'
         sms_message = f"Hello,\nYour account has been credited with {txn.offer}.\nTransaction Reference: {txn.reference}"
-
+        agent_message = f"Hello,\nMTN Bundle transaction with reference {txn.reference} has been completed successfully. {txn.offer} to {txn.bundle_number}"
+        user = models.CustomUser.objects.get(id=request.user.id)
         sms_body = {
             'recipient': f"233{txn.bundle_number}",
             'sender_id': 'Bundle',
             'message': sms_message
         }
+
+        agent_sms_body = {
+            'recipient': f"233{user.phone}",
+            'sender_id': 'Bundle',
+            'message': agent_message
+        }
         response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
+        print(response.text)
+        response = requests.request('POST', url=sms_url, params=agent_sms_body, headers=sms_headers)
         print(response.text)
         return redirect('mtn_admin')
 
