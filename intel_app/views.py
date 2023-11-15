@@ -371,7 +371,7 @@ def mark_as_sent(request, pk):
         }
 
         sms_url = 'https://webapp.usmsgh.com/api/sms/send'
-        sms_message = f"Your account has been credited with {txn.offer}.\nTransaction Reference: {txn.reference}"
+        sms_message = f"Hello,\nYour account has been credited with {txn.offer}.\nTransaction Reference: {txn.reference}"
 
         sms_body = {
             'recipient': f"233{txn.bundle_number}",
