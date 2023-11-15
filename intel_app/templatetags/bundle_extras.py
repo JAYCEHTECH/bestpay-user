@@ -3,6 +3,7 @@ from django import template
 register = template.Library()
 
 
+@register.filter
 def mb_to_gb(value):
     """Converts a string into all lowercase"""
     cut_value = value[:-2]
@@ -11,5 +12,4 @@ def mb_to_gb(value):
     return f"{cut_value}MB"
 
 
-register.filter("mb_to_gb", mb_to_gb)
 
