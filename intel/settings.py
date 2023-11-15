@@ -29,7 +29,7 @@ SECRET_KEY = config("SECRET_KEY")
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    ''
+    'bestpay-4rw6h.ondigitalocean.app/'
 ]
 
 
