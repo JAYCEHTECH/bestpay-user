@@ -31,7 +31,7 @@
                     <tbody>
                     {% for txn in txns %}
                         <tr>
-                            <th scope="row">{{txn.bundle_number}}</th>
+                            <th scope="row">0{{txn.bundle_number}}</th>
                             <td>{{txn.offer}}</td>
                             <td>{{txn.reference}}</td>
                             {% if txn.transaction_status == "Completed" %}
