@@ -33,7 +33,7 @@
                     {% for txn in txns %}
                         <tr>
                             <th scope="row">0{{txn.bundle_number}}</th>
-                            <td>{{txn.offer}} | mb_to_gb</td>
+                            <td>{{txn.offer}}</td>
                             <td>{{txn.reference}}</td>
                             {% if txn.transaction_status == "Completed" %}
                             <td><span class="badge badge-pill badge-success me-1">{{txn.transaction_status}}</span></td>
