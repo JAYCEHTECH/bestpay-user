@@ -245,18 +245,21 @@ def mtn_pay_with_wallet(request):
             offer=f"{bundle}MB",
             reference=reference,
         )
-        new_mtn_transaction.save()
-        user.wallet -= float(amount)
-        user.save()
-        admin = models.AdminInfo.objects.filter().first().phone_number
-        sms_body = {
-            'recipient': f"233{admin}",
-            'sender_id': 'Bundle',
-            'message': sms_message
-        }
-        response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
-        print(response.text)
-        return JsonResponse({'status': "Your transaction will be completed shortly", 'icon': 'success'})
+        if not models.MTNTransaction.objects.filter(user=request.user, offer=f"{bundle}MB", reference=reference, bundle_number=phone_number).exists():
+            new_mtn_transaction.save()
+            user.wallet -= float(amount)
+            user.save()
+            admin = models.AdminInfo.objects.filter().first().phone_number
+            sms_body = {
+                'recipient': f"233{admin}",
+                'sender_id': 'Bundle',
+                'message': sms_message
+            }
+            response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
+            print(response.text)
+            return JsonResponse({'status': "Your transaction will be completed shortly", 'icon': 'success'})
+        else:
+            return JsonResponse({'status': "Your transaction will be completed shortly", 'icon': 'success'})
     return redirect('mtn')
 
 
