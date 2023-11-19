@@ -245,16 +245,17 @@ def mtn_pay_with_wallet(request):
             user.save()
             print(f"after: {user.wallet}")
             current = user.wallet
-        sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
-        new_mtn_transaction = models.MTNTransaction.objects.create(
-            user=request.user,
-            bundle_number=phone_number,
-            offer=f"{bundle}MB",
-            reference=reference,
-        )
-        if not models.MTNTransaction.objects.filter(user=request.user, offer=f"{bundle}MB", reference=reference, bundle_number=phone_number).exists():
+            sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
+            new_mtn_transaction = models.MTNTransaction.objects.create(
+                user=request.user,
+                bundle_number=phone_number,
+                offer=f"{bundle}MB",
+                reference=reference,
+            )
             new_mtn_transaction.save()
+            print("saved")
             admin = models.AdminInfo.objects.filter().first().phone_number
+            sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
             sms_body = {
                 'recipient': f"233{admin}",
                 'sender_id': 'Bundle',
