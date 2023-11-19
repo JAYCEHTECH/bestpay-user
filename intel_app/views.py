@@ -245,7 +245,7 @@ def mtn_pay_with_wallet(request):
             user.save()
             print(f"after: {user.wallet}")
             current = user.wallet
-        sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}.\nPrevious: {previous}\nCurrent: {current}"
+        sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
         new_mtn_transaction = models.MTNTransaction.objects.create(
             user=request.user,
             bundle_number=phone_number,
