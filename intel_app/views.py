@@ -378,8 +378,8 @@ def mark_as_sent(request, pk):
         agent_message = f"Hello,\nMTN Bundle transaction with reference {txn.reference} has been completed successfully. {txn.offer} to {txn.bundle_number}"
         user = models.CustomUser.objects.get(id=request.user.id)
 
-        first_sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{txn.user.phone}&from=BESTPAY GH&sms={sms_message}"
-        sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{txn.bundle_number}&from=BESTPAY GH&sms={agent_message}"
+        first_sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{txn.bundle_number}&from=Bundle&sms={sms_message}"
+        sms_url = f"https://sms.arkesel.com/sms/api?action=send-sms&api_key=UmpEc1JzeFV4cERKTWxUWktqZEs&to=0{txn.user.phone}&from=Bundle&sms={agent_message}"
         first_response = requests.request("GET", url=sms_url)
         response = requests.request("GET", url=first_sms_url)
         print(response.text)
