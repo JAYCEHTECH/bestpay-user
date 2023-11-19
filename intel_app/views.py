@@ -238,6 +238,9 @@ def mtn_pay_with_wallet(request):
             return JsonResponse({'status': f'Your wallet balance is low. Contact the admin to recharge. Admin Contact Info: 0{admin}'})
         bundle = models.MTNBundlePrice.objects.get(price=float(amount)).bundle_volume if user.status == "User" else models.AgentMTNBundlePrice.objects.get(price=float(amount)).bundle_volume
         print(bundle)
+        if not models.MTNTransaction.objects.filter(user=request.user, offer=f"{bundle}MB", reference=reference, bundle_number=phone_number).exists():
+            user.wallet -= float(amount)
+            user.save()
         sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
         new_mtn_transaction = models.MTNTransaction.objects.create(
             user=request.user,
@@ -247,8 +250,6 @@ def mtn_pay_with_wallet(request):
         )
         if not models.MTNTransaction.objects.filter(user=request.user, offer=f"{bundle}MB", reference=reference, bundle_number=phone_number).exists():
             new_mtn_transaction.save()
-            user.wallet -= float(amount)
-            user.save()
             admin = models.AdminInfo.objects.filter().first().phone_number
             sms_body = {
                 'recipient': f"233{admin}",
@@ -490,26 +491,29 @@ def credit_user_from_list(request, reference):
         print(user)
         print(user.phone)
         print(amount)
-        custom_user.wallet += amount
-        custom_user.save()
-        sms_headers = {
-            'Authorization': 'Bearer 1046|WBwx0orkMl2eHZtB9Q9PmNLi3WMtiPPdQWTCBgmF',
-            'Content-Type': 'application/json'
-        }
+        if not crediting.status:
+            custom_user.wallet += amount
+            custom_user.save()
+            sms_headers = {
+                'Authorization': 'Bearer 1046|WBwx0orkMl2eHZtB9Q9PmNLi3WMtiPPdQWTCBgmF',
+                'Content-Type': 'application/json'
+            }
 
-        sms_url = 'https://webapp.usmsgh.com/api/sms/send'
-        sms_message = f"Hello,\nYour Bestpay wallet has been topped up with GHS{amount}.\nReference: {reference}.\nThank you"
+            sms_url = 'https://webapp.usmsgh.com/api/sms/send'
+            sms_message = f"Hello,\nYour Bestpay wallet has been topped up with GHS{amount}.\nReference: {reference}.\nThank you"
 
-        sms_body = {
-            'recipient': f"233{custom_user.phone}",
-            'sender_id': 'Bundle',
-            'message': sms_message
-        }
-        response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
-        print(response.text)
-        crediting.status = True
-        crediting.credited_at = datetime.now()
-        crediting.save()
-        messages.success(request, f"{user} has been credited with {amount}")
-        return redirect('topup_list')
+            sms_body = {
+                'recipient': f"233{custom_user.phone}",
+                'sender_id': 'Bundle',
+                'message': sms_message
+            }
+            response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
+            print(response.text)
+            crediting.status = True
+            crediting.credited_at = datetime.now()
+            crediting.save()
+            messages.success(request, f"{user} has been credited with {amount}")
+            return redirect('topup_list')
+        else:
+            return redirect('topup_list')
 
