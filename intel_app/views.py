@@ -239,8 +239,10 @@ def mtn_pay_with_wallet(request):
         bundle = models.MTNBundlePrice.objects.get(price=float(amount)).bundle_volume if user.status == "User" else models.AgentMTNBundlePrice.objects.get(price=float(amount)).bundle_volume
         print(bundle)
         if not models.MTNTransaction.objects.filter(user=request.user, offer=f"{bundle}MB", reference=reference, bundle_number=phone_number).exists():
+            print(user.wallet)
             user.wallet -= float(amount)
             user.save()
+            print(f"after: {user.wallet}")
         sms_message = f"An MTN Bundle order has been placed. {bundle}MB for {phone_number}"
         new_mtn_transaction = models.MTNTransaction.objects.create(
             user=request.user,
