@@ -26,17 +26,17 @@
 body {
   font-family: "Poppins", sans-serif;
   line-height: 1.5;
-  color: #2D2B3A;
+  color: #000000;
 }
 
 a {
-  color: #6C55F9;
+  color: #FFCB05;
   text-decoration: none;
   background-color: transparent;
 }
 
 a:hover {
-  color: #5641df;
+  color: #FFCB05;
   text-decoration: underline;
 }
 
@@ -63,11 +63,11 @@ a:hover {
 
 /* Color systems */
 .bg-primary {
-  background-color: #6C55F9 !important;
+  background-color: #FFCB05 !important;
 }
 
 a.bg-primary:hover, a.bg-primary:focus {
-  background-color: #5d47eb !important;
+  background-color: #FFCB05 !important;
 }
 
 .bg-accent {
@@ -143,7 +143,7 @@ a.bg-dark:hover, a.bg-dark:focus {
 }
 
 .text-primary {
-  color: #6C55F9 !important;
+  color: #FFCB05 !important;
 }
 
 a.text-primary:hover, a.text-primary:focus {
@@ -440,7 +440,7 @@ a.text-dark:hover, a.text-dark:focus {
 
 .btn-primary {
   color: #fff;
-  background-color: #6C55F9;
+  background-color: #FFCB05;
   border-color: transparent;
 }
 
@@ -704,14 +704,14 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .btn-outline-primary {
-  color: #6C55F9;
-  border-color: #6C55F9;
+  color: #FFCB05;
+  border-color: #FFCB05;
 }
 
 .btn-outline-primary:hover {
   color: #fff;
-  background-color: #6C55F9;
-  border-color: #6C55F9;
+  background-color: #FFCB05;
+  border-color: #FFCB05;
 }
 
 .btn-outline-primary:focus, .btn-outline-primary.focus {
@@ -1398,7 +1398,7 @@ a.text-dark:hover, a.text-dark:focus {
   margin-bottom: 16px;
   height: 320px;
   background-color: #F6F5FC;
-  color: #645F88;
+  color: #000;
   border-radius: 30px;
 }
 
@@ -1517,7 +1517,7 @@ a.text-dark:hover, a.text-dark:focus {
   width: 32px;
   height: 3px;
   border-radius: 40px;
-  background-color: #6C55F9;
+  background-color: #FFCB05;
 }
 
 
@@ -1920,7 +1920,7 @@ a.text-dark:hover, a.text-dark:focus {
 }
 
 .sosmed-button a:hover {
-  background-color: #6C55F9;
+  background-color: #FFCB05;
   color: #fff;
   text-decoration: none;
   transform: rotate(360deg);

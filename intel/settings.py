@@ -30,7 +30,8 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'bestpay-4rw6h.ondigitalocean.app',
-    'www.mtndata.shop'
+    'www.mtndata.shop',
+    '127.0.0.1'
 ]
 
 

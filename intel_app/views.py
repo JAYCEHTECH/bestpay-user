@@ -13,8 +13,64 @@ def home(request):
     return render(request, "layouts/index.html")
 
 
+@login_required(login_url='login')
 def services(request):
-    return render(request, "layouts/services.html")
+    user = models.CustomUser.objects.get(id=request.user.id)
+    user_transactions = models.MTNTransaction.objects.filter(user=user)
+    pending = models.MTNTransaction.objects.filter(user=user, transaction_status="Pending")
+    completed = models.MTNTransaction.objects.filter(user=user, transaction_status="Completed")
+    pending_count = pending.count()
+    completed_count = completed.count()
+    status = user.status
+    count = user_transactions.count()
+    form = forms.MTNForm(status=status)
+    reference = helper.ref_generator()
+    user_email = request.user.email
+    if request.method == "POST":
+        payment_reference = request.POST.get("reference")
+        amount_paid = request.POST.get("amount")
+        new_payment = models.Payment.objects.create(
+            user=request.user,
+            reference=payment_reference,
+            amount=amount_paid,
+            transaction_date=datetime.now(),
+            transaction_status="Completed"
+        )
+        new_payment.save()
+        phone_number = request.POST.get("phone")
+        offer = request.POST.get("amount")
+
+        bundle = models.MTNBundlePrice.objects.get(
+            price=float(offer)).bundle_volume if user.status == "User" else models.AgentMTNBundlePrice.objects.get(
+            price=float(offer)).bundle_volume
+
+        print(phone_number)
+        new_mtn_transaction = models.MTNTransaction.objects.create(
+            user=request.user,
+            bundle_number=phone_number,
+            offer=f"{bundle}MB",
+            reference=payment_reference,
+        )
+        new_mtn_transaction.save()
+        sms_headers = {
+            'Authorization': 'Bearer 1046|WBwx0orkMl2eHZtB9Q9PmNLi3WMtiPPdQWTCBgmF',
+            'Content-Type': 'application/json'
+        }
+
+        sms_url = 'https://webapp.usmsgh.com/api/sms/send'
+        sms_message = f"An order has been placed. {bundle}MB for {phone_number}"
+        admin = models.AdminInfo.objects.filter().first().phone_number
+        sms_body = {
+            'recipient': f"233{admin}",
+            'sender_id': 'Bundle',
+            'message': sms_message
+        }
+        response = requests.request('POST', url=sms_url, params=sms_body, headers=sms_headers)
+        print(response.text)
+        return JsonResponse({'status': "Your transaction will be completed shortly", 'icon': 'success'})
+    user = models.CustomUser.objects.get(id=request.user.id)
+    context = {'form': form, "ref": reference, "completed_count": completed_count, "pending_count": pending_count, "count": count, "email": user_email, "wallet": 0 if user.wallet is None else user.wallet}
+    return render(request, "layouts/services.html", context=context)
 
 
 def pay_with_wallet(request):
@@ -25,9 +81,9 @@ def pay_with_wallet(request):
         amount = request.POST.get("amount")
         reference = request.POST.get("reference")
         if user.wallet is None:
-            return JsonResponse({'status': f'Your wallet balance is low. Contact the admin to recharge. Admin Contact Info: 0{admin}'})
+            return JsonResponse({'status': f'Your wallet balance is low.'})
         elif user.wallet <= 0 or user.wallet < float(amount):
-            return JsonResponse({'status': f'Your wallet balance is low. Contact the admin to recharge. Admin Contact Info: 0{admin}'})
+            return JsonResponse({'status': f'Your wallet balance is low'})
         print(phone_number)
         print(amount)
         print(reference)

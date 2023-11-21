@@ -4,19 +4,35 @@
   {% include 'inc/header.html' %}
 
   <header>
-    {% include 'inc/header.html' %}
+
 
     <div class="container mt-5">
       <div class="page-banner">
         <div class="row justify-content-center align-items-center h-100">
-          <div class="col-md-6">
+          <div class="col-md-12">
             <nav aria-label="Breadcrumb">
               <ul class="breadcrumb justify-content-center py-0 bg-transparent">
                 <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
                 <li class="breadcrumb-item active">Services</li>
               </ul>
             </nav>
-            <h1 class="text-center">Services</h1>
+            <h1 class="text-center"><span class="text-primary">Welcome,</span> Mike</h1>
+            <div class="w-auto mx-auto px-5">
+              <div class="row justify-content-around text-center">
+              <div class="col-4">
+                {{count}}
+                <p class="text-primary">Orders</p>
+              </div>
+              <div class="col-4">
+                {{pending_count}}
+                <p class="text-primary">Pending</p>
+              </div>
+              <div class="col-4">
+                {{completed_count}}
+                <p class="text-primary">Completed</p>
+              </div>
+            </div>
+            </div>
           </div>
         </div>
       </div>
@@ -26,11 +42,42 @@
   <main>
     <div class="page-section" id="services">
       <div class="container">
-          <div class="text-center">
-              <h2 class="title-section">Our Services</h2>
-              <div class="divider mx-auto"></div>
-          </div>
          <div class="row justify-content-center">
+            <div class="col-6">
+              <div class="card">
+                <div class="card-body">
+                    <div class="media d-flex">
+                <div class="align-self-center">
+                  <i style="color:#FFCB05" class="fa fa-wallet fa-2x float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h5>GHS{{wallet}}</h5>
+                  <span>Wallet Balance</span>
+                </div>
+              </div>
+                </div>
+              </div>
+            </div>
+           <div class="col-6">
+              <div class="card">
+                <div class="card-body">
+                    <div class="media d-flex">
+                <div class="align-self-center">
+                  <i style="color:#FFCB05" class="fa fa-history fa-2x float-left"></i>
+                </div>
+                <div class="media-body text-right">
+                  <h5>{{count}}</h5>
+                  <span>Transactions</span>
+                </div>
+              </div>
+                </div>
+              </div>
+            </div>
+         </div>
+
+        <div class="row justify-content-center">
+           <h5 class="mt-5 mb-5"><span class="text-primary">MTN</span> Package</h5>
+        </div>
 <!--       <div class="col-12 col-lg-auto py-3 wow fadeInLeft">-->
 <!--         <div class="card-pricing">-->
 <!--           <div class="header">-->
@@ -50,30 +97,26 @@
 <!--           </div>-->
 <!--         </div>-->
 <!--       </div>-->
-
-       <div class="col-12 col-lg-auto py-3 wow fadeInUp">
-         <div class="card-pricing">
-           <div class="header">
-             <div class="price-icon my-1"><i class="fa-solid fa-signal"></i></div>
-             <div class="price-title">MTN</div>
-           </div>
-           <div class="body py-3">
-             <div class="price-tag">
-               Offers made for You
-             </div>
-             <div class="price-info">
-               <p>Choose the plan that's right for you</p>
-             </div>
-           </div>
-           <div class="footer">
-             <a href="{% url 'mtn' %}" class="btn btn-outline rounded-pill">Buy Now</a>
-           </div>
-         </div>
-       </div>
-
-       
-
-     </div>
+          <form method="post" id="mtnPaymentForm">
+            {% csrf_token %}
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="phone">Phone Number</label>
+                {{form.phone_number}}
+                <small>Number must be 10 digits. E.g. 0270000000</small>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="inputPassword4">Bundle Offer</label>
+                {{form.offers}}
+              </div>
+            </div>
+            <input type="hidden" value={{email}} class="email">
+              <input type="hidden" value={{ref}} class="reference">
+<!--<button type="submit" onclick="payWithPaystack()" class="btn btn-primary">Pay Online</button>-->
+            <button type="button" class="btn btn-primary pay-with-wallet">Pay with Wallet</button>
+              <a style="display: none" class="spinner-border process text-primary mt-2" role="status"></a>
+              <a class="d-block mt-2" href="{% url 'topup-info'%}">Want to top up your wallet? Click here!</a>
+          </form>
       </div>
   </div> <!-- .page-section -->
   </main>
@@ -82,3 +125,112 @@
 
 
 {% endblock %}
+
+
+{% block scripts %}
+<script>
+  const paymentForm = document.getElementById('mtnPaymentForm');
+  let email = $(".email").val()
+  let ref = $(".reference").val()
+  console.log(email + ref)
+  paymentForm.addEventListener("submit", payWithPaystack, false);
+  function payWithPaystack(e) {
+    e.preventDefault();
+    let amount = $(".mtn-offer").val()
+    let phonenumber = $(".mtn-phone").val()
+    if (phonenumber.toString().length < 10 || phonenumber.toString().length != 10 || phonenumber.toString().length > 10){
+      Swal.fire({text: "Phone number must be 10 digits"})
+      location.reload();
+    }
+
+  let handler = PaystackPop.setup({
+    key: 'pk_live_211ba5679babae0b039d8369a30cd8056bdbaec7', // Replace with your public key
+    email: email,
+    amount: amount * 100,
+    currency: "GHS",
+    ref: ref, // generates a pseudo-unique reference. Please replace with a reference you generated. Or remove the line entirely so our API will generate one for you
+    // label: "Optional string that replaces customer email"
+    onClose: function(){
+      swal("Transaction Closed");
+      location.reload()
+    },
+    callback: function(response){
+      reference = response.reference
+      let message = 'Payment complete! Reference: ' + response.reference;
+      Swal.fire({text: "Processing your order"})
+      Swal.showLoading();
+      let token = $("input[name=csrfmiddlewaretoken]").val();
+      $.ajax({
+        url: '/services/mtn/',
+        method: "POST",
+        data: {
+          phone: phonenumber,
+          amount: amount,
+          reference: reference,
+          csrfmiddlewaretoken: token,
+        },
+        success: function(response){
+          Swal.fire({text: response.status, icon:response.icon, confirmButtonText:"Okay"}).then((value) => {
+            location.reload()
+          })
+        }
+      })
+    }
+  });
+
+  handler.openIframe();
+}
+
+$("body").on('click', '.pay-with-wallet', function(e){
+    let firstBtn = $(".paystack-btn")
+    let secondBtn = $(".pay-with-wallet")
+    let process = $(".process")
+    firstBtn.css('display', 'none')
+
+    firstBtn.prop('disabled', true)
+    secondBtn.prop('disabled', true)
+    secondBtn.text("Processing...")
+    process.css('display', 'block')
+
+    console.log("yes")
+    e.preventDefault()
+    console.log(email)
+    console.log(ref)
+
+  let token = $("input[name=csrfmiddlewaretoken]").val();
+    let amount = $(".mtn-offer").val()
+    let phonenumber = $(".mtn-phone").val()
+    if (phonenumber.toString().length < 10 || phonenumber.toString().length !== 10 || phonenumber.toString().length > 10){
+      Swal.fire({text: "Phone number must be 10 digits"})
+      firstBtn.prop('disabled', false)
+        secondBtn.prop('disabled', false)
+        secondBtn.text("Pay with Wallet")
+        process.css('display', 'none')
+    }
+
+    $.ajax({
+      method: "POST",
+      url: "/mtn_pay_with_wallet/",
+      data: {
+        phone: phonenumber,
+        amount: amount,
+        reference: ref,
+        csrfmiddlewaretoken: token,
+      },
+      success: function (response) {
+        console.log(response.status)
+        firstBtn.prop('disabled', false)
+        secondBtn.prop('disabled', false)
+        secondBtn.text("Pay with Wallet")
+        process.css('display', 'none')
+        Swal.fire({text: response.status, confirmButtonText:"Okay", allowOutsideClick: false, allowEscapeKey: false}).then((value) => {
+              location.reload()
+            })
+      },
+    });
+  })
+</script>
+
+
+
+{% endblock scripts %}

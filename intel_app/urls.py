@@ -6,8 +6,8 @@ from .auth import authViews
 
 
 urlpatterns = [
-    path('', views.home, name="home"),
-    path('services', views.services, name='services'),
+    path('', views.services, name="home"),
+    # path('services', views.services, name='services'),
     path('services/mtn', views.mtn, name='mtn'),
     path('services/airtel-tigo/', views.airtel_tigo, name='airtel-tigo'),
     path('services/mtn/', views.mtn, name='mtn'),
