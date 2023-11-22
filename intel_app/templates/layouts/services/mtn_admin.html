@@ -60,11 +60,18 @@
 {% block scripts %}
 
 <script>
-    let number = $(".number").val()
+    // let number = $(".number").val()
     let numberText = $(".number-text")
-    numberText.on("click", function(){
-        console.log(number)
-        navigator.clipboard.writeText(number)
+    numberText.on("click", function(e){
+        e.preventDefault();
+        let wanted_index = $(this).closest("tr").index()
+        let numbers = document.getElementsByClassName("number")
+
+        let number_wanted = numbers[wanted_index]
+        console.log(number_wanted)
+        console.log(number_wanted.value)
+
+        navigator.clipboard.writeText(number_wanted.value)
         Toastify({
           text: "Number copied to clipboard",
         }).showToast();
