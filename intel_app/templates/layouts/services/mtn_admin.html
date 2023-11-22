@@ -31,7 +31,8 @@
                     <tbody>
                     {% for txn in txns %}
                         <tr>
-                            <td>0{{txn.bundle_number}}</td>
+                            <td class="number-text">0{{txn.bundle_number}}</td>
+                            <input type="hidden" class="number" value='0{{txn.bundle_number}}'>
                             <td>{{txn.offer | mb_to_gb}}</td>
                             <td>{{txn.reference}}</td>
                             {% if txn.transaction_status == "Completed" %}
@@ -52,5 +53,22 @@
 
   {% include 'inc/footer.html' %}
 
+
+{% endblock %}
+
+
+{% block scripts %}
+
+<script>
+    let number = $(".number").val()
+    let numberText = $(".number-text")
+    numberText.on("click", function(){
+        console.log(number)
+        navigator.clipboard.writeText(number)
+        Toastify({
+          text: "Number copied to clipboard",
+        }).showToast();
+    })
+</script>
 
 {% endblock %}
