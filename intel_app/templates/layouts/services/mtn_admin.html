@@ -35,6 +35,8 @@
                             <input type="hidden" class="number" value='0{{txn.bundle_number}}'>
                             <td>{{txn.offer | mb_to_gb}}</td>
                             <td>{{txn.reference}}</td>
+                            {% csrf_token %}
+                            <input type="hidden" class="ref" value='{{txn.reference}}'>
                             {% if txn.transaction_status == "Completed" %}
                             <td><span class="badge badge-pill badge-success me-1">{{txn.transaction_status}}</span></td>
                             {% else %}
@@ -66,7 +68,7 @@
 <script>
     // let number = $(".number").val()
     let numberText = $(".number-text")
-    numberText.on("click", function(e){
+    $("body").on("click", ".number-text", function(e){
         e.preventDefault();
         let wanted_index = $(this).closest("tr").index()
         let numbers = document.getElementsByClassName("number")
@@ -79,6 +81,26 @@
         Toastify({
           text: "Number copied to clipboard",
         }).showToast();
+
+        let references = document.getElementsByClassName("ref")
+        let ref_wanted = references[wanted_index]
+        let reference = ref_wanted.value
+        console.log(reference)
+        let token = $("input[name=csrfmiddlewaretoken]").val();
+
+        $.ajax({
+          method: "POST",
+          url: "/change_status/",
+          data: {
+            reference: reference,
+            csrfmiddlewaretoken: token,
+          },
+          success: function (response) {
+              console.log(response.status)
+                $(".table").load(location.href + " .table");
+          },
+    });
+
     })
 </script>
 

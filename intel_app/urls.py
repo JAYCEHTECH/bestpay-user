@@ -21,6 +21,7 @@ urlpatterns = [
     path('credit_user', views.credit_user, name='credit_user'),
     path('pay_with_wallet/', views.pay_with_wallet, name='pay_with_wallet'),
     path('mtn_pay_with_wallet/', views.mtn_pay_with_wallet, name='mtn_pay_with_wallet'),
+    path('change_status/', views.change_stat, name='change_stat'),
     path('topup-info', views.topup_info, name='topup-info'),
     path("request_successful/<str:reference>", views.request_successful, name='request_successful'),
     path('elevated/topup-list', views.topup_list, name="topup_list"),

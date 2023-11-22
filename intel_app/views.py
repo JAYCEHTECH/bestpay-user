@@ -423,6 +423,20 @@ def admin_mtn_history(request):
         return render(request, "layouts/services/mtn_admin.html", context=context)
 
 
+
+def change_stat(request):
+    if request.method == "POST":
+        reference = request.POST.get("reference")
+        txn = models.MTNTransaction.objects.get(reference=reference)
+        txn.transaction_status = "Processing"
+        txn.save()
+        print(txn.reference)
+        print(txn.bundle_number)
+        print(txn.transaction_status)
+        return JsonResponse({'status': 'Done'})
+    return JsonResponse({'status': 'change_stat'})
+
+
 @login_required(login_url='login')
 def mark_as_sent(request, pk):
     if request.user.is_staff and request.user.is_superuser:
