@@ -41,7 +41,11 @@
                             <td><span class="badge badge-pill badge-danger me-1">{{txn.transaction_status}}</span></td>
                             {% endif %}
                             <td>{{txn.transaction_date}}</td>
+                            {% if txn.transaction_status == "Completed" %}
+                            <td><a disabled="" href="#" class="badge badge-success disabled">Sent</a></td>
+                            {% else %}
                             <td><a href="{% url 'mark_as_sent' pk=txn.id %}" class="badge badge-success">Mark as sent</a></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     </tbody>
