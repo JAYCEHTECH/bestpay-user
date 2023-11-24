@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
-    <link href="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.css" rel="stylesheet"/>
+    <link href="{% static 'assets/DataTables/datatables.css' %}" rel="stylesheet"/>
 
   <link rel="stylesheet" href="{% static 'assets/vendor/animate/animate.css' %}">
 
@@ -68,7 +68,7 @@
       <script src="https://kit.fontawesome.com/74a104b829.js" crossorigin="anonymous"></script>
 
       <script src="{% static 'assets/js/jquery-3.5.1.min.js' %}"></script>
-      <script src="https://cdn.datatables.net/v/dt/dt-1.13.4/datatables.min.js"></script>
+      <script src="{% static 'assets/DataTables/datatables.js' %}"></script>
       <script src="https://code.jquery.com/jquery-3.7.0.min.js" integrity="sha256-2Pmvv0kuTBOenSvLm6bvfBSSHrUJ+3A7x6P5Ebd07/g=" crossorigin="anonymous"></script>
       <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -108,7 +108,7 @@
       </script>
 
       <script>
-        let table = new DataTable('#myTable', {
+        new DataTable('#myTable', {
             responsive: true,
             ordering: false,
             "pageLength": 500,
